@@ -1,0 +1,12 @@
+body
+{
+  background-color: darkblue;
+}
+main
+{
+  background-color: beige;
+  max-width: 800px;
+  padding: 10px;
+  margin: auto;
+  min-height: 100vh;
+}
