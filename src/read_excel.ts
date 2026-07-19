@@ -24,7 +24,6 @@ export async function handle_data(data:any)
         }
         dictionaries.push(dictionary);
     }
-    console.log(dictionaries);
     return dictionaries;
 }
 async function get_target_sheet(sheets:any,sheet_name:string)
@@ -45,12 +44,10 @@ export async function get_data(target_file:string,sheet_name="Data")
     const blob=await response.blob();
     // cast options to any to avoid TypeScript type mismatch for the 'sheet' property
     const sheets=await readExcelFile(blob) as any;
-    console.log(sheets);
    
     const sheet=await get_target_sheet(sheets,sheet_name);
     const dictionaries=await handle_data(sheet["data"]);
     
-    console.log(dictionaries);
     return dictionaries;
 }
 

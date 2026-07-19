@@ -16,20 +16,20 @@
 
   <label for="heat_measure">Heat Measure</label>
   <select id="heat_measure">
-  <option value="temperature_2m_max">Maximum Temperature</option>
-  <option value="temperature_2m_mean" selected>Average Temperature</option>
-  <option value="temperature_2m_min">Minimum Temperature</option>
+  <option value="average_temperature_2m_max">Maximum Temperature</option>
+  <option value="average_temperature_2m_mean" selected>Average Temperature</option>
+  <option value="average_temperature_2m_min">Minimum Temperature</option>
   </select>
 
   <label for="humidity_measure">Humidity Measure</label>
   <select id="humidity_measure">
-  <option value="relative_humidity_2m_max">Maximum Humidity</option>
-  <option value="relative_humidity_2m_mean" selected>Average Humidity</option>
-  <option value="relative_humidity_2m_min">Minimum Humidity</option>
+  <option value="average_relative_humidity_2m_max">Maximum Humidity</option>
+  <option value="average_relative_humidity_2m_mean" selected>Average Humidity</option>
+  <option value="average_relative_humidity_2m_min">Minimum Humidity</option>
   </select>
   </form>
   <div id="results">
-  
+  <canvas id="results_canvas"></canvas>
   </div>
   </main>
   <script src="src/main.ts" type="module"></script>
