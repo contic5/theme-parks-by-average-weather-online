@@ -10,6 +10,15 @@ async function main()
   let heat_index_raw:any=await get_data("test-heat-index.xlsx");
   console.log(heat_index_raw);
   form_heat_index_dictionary(heat_index_raw);
+
+  let all_park_names=[];
+  for(let i=0;i<weather_data.length;i++)
+  {
+    all_park_names.push(weather_data[i]["Park"]);
+  }
+  park_names= [...new Set(all_park_names)];
+  console.log(park_names);
+
 }
 function form_heat_index_dictionary(heat_index_raw:any)
 {
@@ -28,8 +37,12 @@ function form_heat_index_dictionary(heat_index_raw:any)
 function calculate_heat_index(heat:number,humidity:number)
 {
   const heat_rounded=Math.round(heat/2)*2;
-  const humidity_rounded=Math.round(humidity/4)*4;
-  const heat_index=heat_index_dict[heat_rounded][humidity];
+  let humidity_rounded=Math.round(humidity/4)*4;
+  if(humidity_rounded<=4)
+  {
+    humidity_rounded=4;
+  }
+  const heat_index=heat_index_dict[heat_rounded][humidity_rounded];
   if(!heat_index)
   {
     return heat;
@@ -43,9 +56,10 @@ export function update_values()
   const humidity_measure_element=document.getElementById("humidity_measure") as HTMLSelectElement;
   humidity_measure=humidity_measure_element.value;
 
-  calculate_heat_index
+  //calculate_heat_index(0,0);
 }
 
+let park_names:any[]=[];
 let weather_data=[];
 let heat_index_dict:any={};
 

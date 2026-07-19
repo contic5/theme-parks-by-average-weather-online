@@ -8,7 +8,7 @@ let ride_dictionaries=await get_data("Disneyland Rides.xlsx");
 
 */
 
-import readXlsxFile from 'read-excel-file';
+import readExcelFile from 'read-excel-file/browser';
 
 export async function handle_data(data:any)
 {
@@ -27,14 +27,31 @@ export async function handle_data(data:any)
     console.log(dictionaries);
     return dictionaries;
 }
+async function get_target_sheet(sheets:any,sheet_name:string)
+{
+    for(let i=0;i<sheets.length;i++)
+    {
+        if(sheets[i]["sheet"]==sheet_name)
+        {
+            return sheets[i];
+        }
+    }
+    return null;
+}
 export async function get_data(target_file:string,sheet_name="Data")
 {
-    console.log("Awaiting");
+    console.log("Awaiting Getting "+target_file);
     const response=await fetch(target_file);
     const blob=await response.blob();
-    const rows=await readXlsxFile(blob,{sheet:sheet_name});
-    const dictionaries=await handle_data(rows);
+    // cast options to any to avoid TypeScript type mismatch for the 'sheet' property
+    const sheets=await readExcelFile(blob) as any;
+    console.log(sheets);
+   
+    const sheet=await get_target_sheet(sheets,sheet_name);
+    const dictionaries=await handle_data(sheet["data"]);
     
     console.log(dictionaries);
     return dictionaries;
 }
+
+export default get_data;
