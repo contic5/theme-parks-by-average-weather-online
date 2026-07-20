@@ -15,13 +15,27 @@ async function main()
     all_park_names.push(weather_data[i]["Park"]);
   }
   park_names= [...new Set(all_park_names)];
+  for(let park_name of park_names)
+  {
+    let option=document.createElement("option") as HTMLOptionElement;
+    document.getElementById("target_park")?.appendChild(option);
+
+    option.value=park_name;
+    option.innerHTML=park_name;
+  }
+
+  for(let i=0;i<weather_data.length;i++)
+  {
+    min_heat_index=Math.min(min_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_min"],weather_data[i]["average_relative_humidity_2m_min"]));
+    min_heat_index=Math.max(max_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_max"],weather_data[i]["average_relative_humidity_2m_max"]));
+  }
 
   update_values();
 }
 function form_heat_index_dictionary(heat_index_raw:any)
 {
   let index=0;
-  for(let temperature=126;temperature>=76;temperature-=4)
+  for(let temperature=126;temperature>=76;temperature-=2)
   {
     heat_index_dict[temperature]={};
     for(let humidity in heat_index_raw[index])
@@ -34,8 +48,7 @@ function form_heat_index_dictionary(heat_index_raw:any)
 }
 function calculate_heat_index(heat:number,humidity:number)
 {
-  let heat_rounded=Math.round(heat/4)*4;
-  heat_rounded-=(heat_rounded+2)%4;
+  let heat_rounded=Math.round(heat/2)*2;
 
   let humidity_rounded=Math.round(humidity/4)*4;
   if(humidity_rounded<=4)
@@ -73,7 +86,93 @@ function round(num:number,places:number)
 function graph_data(average_heat_index_by_month: any)
 {
   let results_canvas=document.getElementById("results_canvas") as HTMLCanvasElement;
-  new Chart(
+  console.log(`Chart Created ${chart_created}`);
+  if(chart_created)
+  {
+    console.log("Destroying chart");
+    chart.destroy();
+  }
+  chart_created=true;
+  console.log(`Updated Chart Created to equal ${chart_created}`);
+
+  /*
+  heat_index_category_dict={
+    "above_caution":80,
+    "above_extreme_caution":90,
+    "above_danger":105,
+    "above_extreme_danger":130,
+  }
+  */
+
+  const horizontalLinePlugin = 
+  {
+      id: 'horizontalLine',
+      afterDraw: (chart:any) => {
+          const yValue = chart.scales.y.getPixelForValue(80);
+          const ctx = chart.ctx;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(chart.chartArea.left, yValue);
+          ctx.lineTo(chart.chartArea.right, yValue);
+          ctx.strokeStyle = 'yellow';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+      }
+  };
+
+  const horizontalLinePlugin_2 = 
+  {
+      id: 'horizontalLine',
+      afterDraw: (chart:any) => {
+          const yValue = chart.scales.y.getPixelForValue(90);
+          const ctx = chart.ctx;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(chart.chartArea.left, yValue);
+          ctx.lineTo(chart.chartArea.right, yValue);
+          ctx.strokeStyle = 'orange';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+      }
+  };
+
+  const horizontalLinePlugin_3 = 
+  {
+      id: 'horizontalLine',
+      afterDraw: (chart:any) => {
+          const yValue = chart.scales.y.getPixelForValue(105);
+          const ctx = chart.ctx;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(chart.chartArea.left, yValue);
+          ctx.lineTo(chart.chartArea.right, yValue);
+          ctx.strokeStyle = 'red';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+      }
+  };
+
+  const horizontalLinePlugin_4 = 
+  {
+      id: 'horizontalLine',
+      afterDraw: (chart:any) => {
+          const yValue = chart.scales.y.getPixelForValue(130);
+          const ctx = chart.ctx;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(chart.chartArea.left, yValue);
+          ctx.lineTo(chart.chartArea.right, yValue);
+          ctx.strokeStyle = 'darkred';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.restore();
+      }
+  };
+
+  chart=new Chart(
     results_canvas,
     {
       type: 'line',
@@ -85,14 +184,28 @@ function graph_data(average_heat_index_by_month: any)
             data: average_heat_index_by_month
           }
         ]
-      }
+      },
+      options:{
+        scales: 
+        {
+          y: {
+            min: 0,
+            max: 180
+          }
+        }
+      },
+      plugins: [horizontalLinePlugin,horizontalLinePlugin_2,horizontalLinePlugin_3,horizontalLinePlugin_4]
     }
   );
 }
 function calculate_results()
 {
   console.log(`Calculating heat index for ${heat_measure} and ${humidity_measure}`);
-  let filtered_data:any[]=weather_data.filter((val,index)=>true==true);
+  let filtered_data:any[]=[...weather_data];
+  if(target_park.length>4)
+  {
+    filtered_data=filtered_data.filter((val,index)=>val["Park"]==target_park);
+  }
   for(let i=0;i<filtered_data.length;i++)
   {
     filtered_data[i]["heat_index"]=calculate_heat_index(filtered_data[i][heat_measure],filtered_data[i][humidity_measure]);
@@ -127,6 +240,9 @@ export function update_values()
 
   const humidity_measure_element=document.getElementById("humidity_measure") as HTMLSelectElement;
   humidity_measure=humidity_measure_element.value;
+
+  const target_park_element=document.getElementById("target_park") as HTMLSelectElement;
+  target_park=target_park_element.value;
   calculate_results();
 }
 
@@ -134,6 +250,13 @@ let park_names:any[]=[];
 let weather_data:any[]=[];
 let heat_index_dict:any={};
 
+let target_park="";
 let heat_measure="";
 let humidity_measure="";
+
+let chart_created=false;
+let chart:Chart;
+
+let min_heat_index=1000;
+let max_heat_index=0;
 main();

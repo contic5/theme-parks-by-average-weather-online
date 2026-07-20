@@ -12,7 +12,9 @@
   <h1>Theme Parks by Average Weather</h1>
   <form>
   <label for="target_park">Target Park</label>
-  <select id="target_park"></select>
+  <select id="target_park">
+  <option value="*">All Parks</option>
+  </select>
 
   <label for="heat_measure">Heat Measure</label>
   <select id="heat_measure">
@@ -32,14 +34,17 @@
   <canvas id="results_canvas"></canvas>
   </div>
   </main>
-  <script src="src/main.ts" type="module"></script>
   <script type="module">
+
+  //This calls update values
   import {update_values} from "/src/main.ts";
   let heat_measure_element=document.getElementById("heat_measure");
   let humidity_measure_element=document.getElementById("humidity_measure");
+  let target_park_element=document.getElementById("target_park");
 
   heat_measure_element.onchange=update_values;
   humidity_measure_element.onchange=update_values;
+  target_park_element.onchange=update_values;
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   </body>
