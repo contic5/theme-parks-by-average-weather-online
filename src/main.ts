@@ -3,6 +3,17 @@ import {get_data} from './read_excel.ts';
 import Chart from 'chart.js/auto'
 
 const ERROR_NUMBER=999999;
+
+function to_title_case(s:string)
+{
+  let words:string[]=s.split(" ");
+  for(let i=0;i<words.length;i++)
+  {
+    words[i]=words[i].charAt(0).toUpperCase()+words[i].slice(1,words[i].length);
+  }
+  return words.join(" ");
+}
+    
 export async function main(target_sheet:string)
 {
   weather_data=await get_data("Theme_Park_Weather_Data.xlsx",target_sheet);
@@ -166,7 +177,17 @@ function graph_data(average_heat_index_by_month: any)
           ctx.restore();
       }
   };
-  
+
+  heat_measure_written=heat_measure;
+  heat_measure_written=heat_measure_written.replaceAll("_"," ");
+  heat_measure_written=to_title_case(heat_measure_written);
+  console.log(heat_measure_written);
+
+  humidity_measure_written=humidity_measure;
+  humidity_measure_written=humidity_measure_written.replaceAll("_"," ");
+  humidity_measure_written=to_title_case(humidity_measure_written);
+  console.log(humidity_measure_written);
+
   chart=new Chart(
     results_canvas,
     {
@@ -192,7 +213,7 @@ function graph_data(average_heat_index_by_month: any)
         {
           title:{
             display: true,
-            text: 'Custom Chart Title'
+            text: `Heat Index by ${heat_measure_written} and ${humidity_measure_written}`
           }
         }
       },
@@ -265,6 +286,9 @@ let heat_index_dict:any={};
 let target_park="";
 let heat_measure="";
 let humidity_measure="";
+
+let heat_measure_written="";
+let humidity_measure_written="";
 
 let chart_created=false;
 let chart:Chart;

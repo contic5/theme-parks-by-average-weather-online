@@ -11,12 +11,13 @@
   <main>
   <h1>Theme Parks by Daily Average Weather</h1>
 
-  <nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">Daily Average Weather</a>
-    <a class="navbar-brand" href="calculate_with_averages.html">Aggregated Average Weather</a>
-  </div>
-  </nav>
+  <ul class="nav">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="index.html">Daily Average Weather</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="calculate_with_aggregated_averages.html">Aggregated Average Weather</a>
+  </ul>
 
   <h2>Setup</h2>
   <form>
@@ -44,7 +45,7 @@
   <canvas id="results_canvas"></canvas>
   </div>
   <h2>Methodology</h2>
-  <p>The heat index is calculated based on each day's weather. You can select the daily minimum, average or maximum heat and the daily minimum, average or maximum humidity. The heat index is calculated based on your selected heat and humidity.</p>
+  <p>The heat is by day. The humidity is calculated by hour and converted into daily values. The daily minimum humidity is the minimum hourly humidity, the daily average humidity is the average of the 24 hourly humidity hours, and the maximum humidity is the maximum hourly humidity. The heat index is calculated based on each day's weather. You can select the daily minimum, average or maximum heat and the daily minimum, average or maximum humidity. The heat index is calculated based on your selected heat and humidity.</p>
   </main>
   <script type="module">
 
