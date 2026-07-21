@@ -39,7 +39,6 @@ async function get_target_sheet(sheets:any,sheet_name:string)
 }
 export async function get_data(target_file:string,sheet_name="Data")
 {
-    console.log("Awaiting Getting "+target_file);
     const response=await fetch(target_file);
     const blob=await response.blob();
     // cast options to any to avoid TypeScript type mismatch for the 'sheet' property

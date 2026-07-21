@@ -2,9 +2,10 @@ import './style.css'
 import {get_data} from './read_excel.ts';
 import Chart from 'chart.js/auto'
 
-async function main()
+const ERROR_NUMBER=999999;
+export async function main(target_sheet:string)
 {
-  weather_data=await get_data("Theme_Park_Weather_Data.xlsx","Averaged_Data");
+  weather_data=await get_data("Theme_Park_Weather_Data.xlsx",target_sheet);
 
   let heat_index_raw:any=await get_data("test-heat-index.xlsx");
   form_heat_index_dictionary(heat_index_raw);
@@ -24,11 +25,12 @@ async function main()
     option.innerHTML=park_name;
   }
 
+  /*
   for(let i=0;i<weather_data.length;i++)
   {
     min_heat_index=Math.min(min_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_min"],weather_data[i]["average_relative_humidity_2m_min"]));
-    min_heat_index=Math.max(max_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_max"],weather_data[i]["average_relative_humidity_2m_max"]));
-  }
+    max_heat_index=Math.max(max_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_max"],weather_data[i]["average_relative_humidity_2m_max"]));
+  }*/
 
   update_values();
 }
@@ -44,13 +46,12 @@ function form_heat_index_dictionary(heat_index_raw:any)
     }
     index+=1;
   }
-  console.log(heat_index_dict);
 }
 function calculate_heat_index(heat:number,humidity:number)
 {
-  let heat_rounded=Math.round(heat/2)*2;
+  let heat_rounded=Math.round(heat/2.0)*2;
 
-  let humidity_rounded=Math.round(humidity/4)*4;
+  let humidity_rounded=Math.round(humidity/4.0)*4;
   if(humidity_rounded<=4)
   {
     humidity_rounded=4;
@@ -62,8 +63,8 @@ function calculate_heat_index(heat:number,humidity:number)
   }
   if(heat_rounded in heat_index_dict==false)
   {
-    console.error(heat_rounded+" is not in heat index dictionary");
-    return heat;
+    console.error(heat_rounded+" is not in heat_index_dict. Returning ERROR_NUMBER "+ERROR_NUMBER);
+    return ERROR_NUMBER;
   }
   if(humidity_rounded in heat_index_dict[heat_rounded]==false)
   {
@@ -76,12 +77,6 @@ function calculate_heat_index(heat:number,humidity:number)
     return heat;
   }
   return heat_index;
-}
-function round(num:number,places:number)
-{
-  num*=Math.pow(10,places);
-  num=Math.round(num);
-  return num/Math.pow(10,places);
 }
 function graph_data(average_heat_index_by_month: any)
 {
@@ -172,12 +167,6 @@ function graph_data(average_heat_index_by_month: any)
       }
   };
   
-  const title_plugin=
-  {
-    display: true,
-    text: 'Custom Chart Title'
-  }
-
   chart=new Chart(
     results_canvas,
     {
@@ -221,6 +210,10 @@ function calculate_results()
   }
   for(let i=0;i<filtered_data.length;i++)
   {
+    if(isNaN(filtered_data[i][heat_measure]))
+    {
+      console.error(filtered_data[i][heat_measure]+" is not a number");
+    }
     filtered_data[i]["heat_index"]=calculate_heat_index(filtered_data[i][heat_measure],filtered_data[i][humidity_measure]);
   }
   filtered_data.sort((a,b) => a["Month"]-b["Month"]);
@@ -258,6 +251,12 @@ export function update_values()
   target_park=target_park_element.value;
   calculate_results();
 }
+function round(num:number,places:number)
+{
+  num*=Math.pow(10,places);
+  num=Math.round(num);
+  return num/Math.pow(10,places);
+}
 
 let park_names:any[]=[];
 let weather_data:any[]=[];
@@ -272,4 +271,3 @@ let chart:Chart;
 
 let min_heat_index=1000;
 let max_heat_index=0;
-main();

@@ -9,8 +9,8 @@
   </head>
   <body>
   <main>
-  <h1>Theme Parks by Daily Average Weather</h1>
-
+  <h1>Theme Parks by Aggregated Average Weather</h1>
+  
   <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="index.html">Daily Average Weather</a>
@@ -27,16 +27,16 @@
 
   <label for="heat_measure">Heat Measure</label>
   <select id="heat_measure">
-  <option value="temperature_2m_max">Maximum Temperature</option>
-  <option value="temperature_2m_mean" selected>Average Temperature</option>
-  <option value="temperature_2m_min">Minimum Temperature</option>
+  <option value="average_temperature_2m_max">Average Monthly Maximum Temperature</option>
+  <option value="average_temperature_2m_mean" selected>Average Monlthy Average Temperature</option>
+  <option value="average_temperature_2m_min">Average Monthly Minimum Temperature</option>
   </select>
 
   <label for="humidity_measure">Humidity Measure</label>
   <select id="humidity_measure">
-  <option value="relative_humidity_2m_max">Maximum Humidity</option>
-  <option value="relative_humidity_2m_mean" selected>Average Humidity</option>
-  <option value="relative_humidity_2m_min">Minimum Humidity</option>
+  <option value="average_relative_humidity_2m_max">Average Monthly Maximum Humidity</option>
+  <option value="average_relative_humidity_2m_mean" selected>Average Monthly Average Humidity</option>
+  <option value="average_relative_humidity_2m_min">Average Monthly Minimum Humidity</option>
   </select>
   </form>
   <h2>Results</h2>
@@ -44,7 +44,15 @@
   <canvas id="results_canvas"></canvas>
   </div>
   <h2>Methodology</h2>
-  <p>The heat index is calculated based on each day's weather. You can select the daily minimum, average or maximum heat and the daily minimum, average or maximum humidity. The heat index is calculated based on your selected heat and humidity.</p>
+  <p>The heat and humidity values are based on averaged values for each month over 10 years (around 300 dates are averaged for each month). The heat is by day. The humidity is calculated by hour and converted into daily values. The daily minimum humidity is the minimum hourly humidity, the daily average humidity is the average of the 24 hourly humidity hours, and the maximum humidity is the maximum hourly humidity. This is how the selectable options are defined</p>
+  <ul>
+  <li>Minimum Heat: The average of the daily low temperature</li>
+  <li>Average Heat: The average of the daily average temperature.</li>
+  <li>Maximum Heat: The average of the daily high temperature.</li>
+  <li>Minimum Humidity: The average of the daily minimum humidity</li>
+  <li>Average Humidity: The average of the daily average humidity.</li>
+  <li>Maximum Humidity: The average of the daily maximum humidity.</li>
+  </ul>
   </main>
   <script type="module">
 
@@ -57,8 +65,8 @@
   heat_measure_element.onchange=update_values;
   humidity_measure_element.onchange=update_values;
   target_park_element.onchange=update_values;
-
-  main("Data");
+  
+  main("Averaged_Data");
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   </body>
