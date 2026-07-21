@@ -104,7 +104,7 @@ function graph_data(average_heat_index_by_month: any)
   }
   */
 
-  const horizontalLinePlugin = 
+  const caution_line_plugin = 
   {
       id: 'horizontalLine',
       afterDraw: (chart:any) => {
@@ -121,7 +121,7 @@ function graph_data(average_heat_index_by_month: any)
       }
   };
 
-  const horizontalLinePlugin_2 = 
+  const extreme_caution_line_plugin = 
   {
       id: 'horizontalLine',
       afterDraw: (chart:any) => {
@@ -138,7 +138,7 @@ function graph_data(average_heat_index_by_month: any)
       }
   };
 
-  const horizontalLinePlugin_3 = 
+  const warning_line_plugin = 
   {
       id: 'horizontalLine',
       afterDraw: (chart:any) => {
@@ -155,7 +155,7 @@ function graph_data(average_heat_index_by_month: any)
       }
   };
 
-  const horizontalLinePlugin_4 = 
+  const extreme_warning_line_plugin = 
   {
       id: 'horizontalLine',
       afterDraw: (chart:any) => {
@@ -171,6 +171,12 @@ function graph_data(average_heat_index_by_month: any)
           ctx.restore();
       }
   };
+  
+  const title_plugin=
+  {
+    display: true,
+    text: 'Custom Chart Title'
+  }
 
   chart=new Chart(
     results_canvas,
@@ -190,11 +196,18 @@ function graph_data(average_heat_index_by_month: any)
         {
           y: {
             min: 0,
-            max: 180
+            max: 140
+          }
+        },
+        plugins:
+        {
+          title:{
+            display: true,
+            text: 'Custom Chart Title'
           }
         }
       },
-      plugins: [horizontalLinePlugin,horizontalLinePlugin_2,horizontalLinePlugin_3,horizontalLinePlugin_4]
+      plugins: [caution_line_plugin,extreme_caution_line_plugin,warning_line_plugin,extreme_warning_line_plugin]
     }
   );
 }
