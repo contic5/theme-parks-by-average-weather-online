@@ -4,9 +4,12 @@ import Chart from 'chart.js/auto'
 
 const ERROR_NUMBER=999999;
 
+//Convert multiple words to Title Case
 function to_title_case(s:string)
 {
   let words:string[]=s.split(" ");
+
+  //Capitalize each word
   for(let i=0;i<words.length;i++)
   {
     words[i]=words[i].charAt(0).toUpperCase()+words[i].slice(1,words[i].length);
@@ -16,17 +19,24 @@ function to_title_case(s:string)
     
 export async function main(target_sheet:string)
 {
+  //Get weather data from Excel File
   weather_data=await get_data("Theme_Park_Weather_Data.xlsx",target_sheet);
 
+  //Get heat index data from Excel File
   let heat_index_raw:any=await get_data("test-heat-index.xlsx");
+
+  //Turn heat index into 2d dictionary heat_index[heat][humidity]
   form_heat_index_dictionary(heat_index_raw);
 
+  //Get all park names
   let all_park_names=[];
   for(let i=0;i<weather_data.length;i++)
   {
     all_park_names.push(weather_data[i]["Park"]);
   }
   park_names= [...new Set(all_park_names)];
+
+  //Add option for all park names
   for(let park_name of park_names)
   {
     let option=document.createElement("option") as HTMLOptionElement;
@@ -38,6 +48,8 @@ export async function main(target_sheet:string)
 
   update_values();
 }
+
+//Convert heat index into 2d dictionary heat_index_dict[heat][humidity]
 function form_heat_index_dictionary(heat_index_raw:any)
 {
   let index=0;
@@ -51,20 +63,27 @@ function form_heat_index_dictionary(heat_index_raw:any)
     index+=1;
   }
 }
+
+//Get heat index from heat and humdiity
 function calculate_heat_index(heat:number,humidity:number)
 {
   let heat_rounded=Math.round(heat/2.0)*2;
 
   let humidity_rounded=Math.round(humidity/4.0)*4;
+
+  //Make humidity 4 if it is less than 4
   if(humidity_rounded<=4)
   {
     humidity_rounded=4;
   }
 
+  //The minimum heat in the heat humidity dictionary is 76. Just return the original heat if it is below 76.
   if(heat_rounded<76)
   {
     return heat;
   }
+
+  //Check if heat and humidity are properly in dictionary.
   if(heat_rounded in heat_index_dict==false)
   {
     console.error(heat_rounded+" is not in heat_index_dict. Returning ERROR_NUMBER "+ERROR_NUMBER);
@@ -72,13 +91,15 @@ function calculate_heat_index(heat:number,humidity:number)
   }
   if(humidity_rounded in heat_index_dict[heat_rounded]==false)
   {
-    return heat;
+    console.error(humidity_rounded+" is not in heat_index_dict. Returning ERROR_NUMBER "+ERROR_NUMBER);
+    return ERROR_NUMBER;
   }
 
   const heat_index=heat_index_dict[heat_rounded][humidity_rounded];
   if(!heat_index)
   {
-    return heat;
+    console.error(heat_index+" has an error. Returning ERROR_NUMBER "+ERROR_NUMBER);
+    return ERROR_NUMBER;
   }
   return heat_index;
 }
@@ -103,6 +124,12 @@ function graph_data(average_heat_index_by_month: any)
   }
   */
 
+  /*Plugins for various heat index values.
+  Caution: 80-89
+  Extreme Caution: 90-104
+  Danger: 105-129
+  Extreme Danger: 130+
+  */
   const caution_line_plugin = 
   {
       id: 'horizontalLine',
@@ -171,18 +198,19 @@ function graph_data(average_heat_index_by_month: any)
       }
   };
 
+  //Convert heat measure into a more displayable form
   heat_measure_written=heat_measure;
   heat_measure_written=heat_measure_written.replaceAll("_"," ");
   heat_measure_written=to_title_case(heat_measure_written);
   heat_measure_written=heat_measure_written.replace(" 2m "," ");
-  console.log(heat_measure_written);
 
+  //Convert humidity measure into a more displayable form
   humidity_measure_written=humidity_measure;
   humidity_measure_written=humidity_measure_written.replaceAll("_"," ");
   humidity_measure_written=to_title_case(humidity_measure_written);
   humidity_measure_written=humidity_measure_written.replace(" 2m "," ");
-  console.log(humidity_measure_written);
 
+  //Change * to All Parks
   let target_park_written=target_park;
   if(target_park_written.length<3)
   {
@@ -207,7 +235,7 @@ function graph_data(average_heat_index_by_month: any)
         {
           y: {
             min: 0,
-            max: 150
+            max: 160
           }
         },
         plugins:
@@ -222,40 +250,53 @@ function graph_data(average_heat_index_by_month: any)
     }
   );
 }
+
+//Calculate the heat index for the selected heat measure and humidity measure.
 function calculate_results()
 {
   console.log(`Calculating heat index for ${heat_measure} and ${humidity_measure}`);
-  let filtered_data:any[]=[...weather_data];
-  if(target_park.length>4)
-  {
-    filtered_data=filtered_data.filter((val,index)=>val["Park"]==target_park);
-  }
-  for(let i=0;i<filtered_data.length;i++)
-  {
-    if(isNaN(filtered_data[i][heat_measure]))
-    {
-      console.error(filtered_data[i][heat_measure]+" is not a number");
-    }
-    filtered_data[i]["heat_index"]=calculate_heat_index(filtered_data[i][heat_measure],filtered_data[i][humidity_measure]);
-  }
-  filtered_data.sort((a,b) => a["Month"]-b["Month"]);
 
+  let filtered_weather_data:any[]=[...weather_data];
+  if(target_park.length>=3)
+  {
+    filtered_weather_data=filtered_weather_data.filter((val,index)=>val["Park"]==target_park);
+  }
+  for(let i=0;i<filtered_weather_data.length;i++)
+  {
+    //Check if there is an error in the filtered weather data
+    if(isNaN(filtered_weather_data[i][heat_measure]))
+    {
+      console.error(filtered_weather_data[i][heat_measure]+" is not a number");
+    }
+
+    //Calculate the heat index for each row in filtered_weather_data
+    filtered_weather_data[i]["heat_index"]=calculate_heat_index(filtered_weather_data[i][heat_measure],filtered_weather_data[i][humidity_measure]);
+  }
+
+  //Calculate the average heat index by month
   let count=0;
   let sum=0;
   let target_month=1;
   let average_heat_index_by_month:any[]=[];
-  for(let i=0;i<filtered_data.length;i++)
+
+  //Sort by month so that later months always occur after earlier months
+  filtered_weather_data.sort((a,b) => a["Month"]-b["Month"]);
+
+  //Loop through filtered_weather_data to find the count and heat index sum for each month.
+  for(let i=0;i<filtered_weather_data.length;i++)
   {
-    if(filtered_data[i]["Month"]!=target_month)
+    //Once we are done with a month, calculate the average heat index for that month.
+    if(filtered_weather_data[i]["Month"]!=target_month)
     {
       average_heat_index_by_month.push(round(sum/count,2));
       sum=0;
       count=0;
       target_month+=1;
     }
-    sum+=filtered_data[i]["heat_index"];
+    sum+=filtered_weather_data[i]["heat_index"];
     count+=1;
   }
+  //Add the average heat index for December.
   average_heat_index_by_month.push(round(sum/count,2));
 
   console.log(average_heat_index_by_month);
@@ -263,16 +304,20 @@ function calculate_results()
 }
 export function update_values()
 {
+  //Get selected heat measure
   const heat_measure_element=document.getElementById("heat_measure") as HTMLSelectElement;
   heat_measure=heat_measure_element.value;
 
+  //Get selected humidity measure
   const humidity_measure_element=document.getElementById("humidity_measure") as HTMLSelectElement;
   humidity_measure=humidity_measure_element.value;
 
+  //Get selected park
   const target_park_element=document.getElementById("target_park") as HTMLSelectElement;
   target_park=target_park_element.value;
   calculate_results();
 }
+//Round number to specific places
 function round(num:number,places:number)
 {
   num*=Math.pow(10,places);
