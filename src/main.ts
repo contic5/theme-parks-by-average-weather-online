@@ -36,13 +36,6 @@ export async function main(target_sheet:string)
     option.innerHTML=park_name;
   }
 
-  /*
-  for(let i=0;i<weather_data.length;i++)
-  {
-    min_heat_index=Math.min(min_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_min"],weather_data[i]["average_relative_humidity_2m_min"]));
-    max_heat_index=Math.max(max_heat_index,calculate_heat_index(weather_data[i]["average_temperature_2m_max"],weather_data[i]["average_relative_humidity_2m_max"]));
-  }*/
-
   update_values();
 }
 function form_heat_index_dictionary(heat_index_raw:any)
@@ -181,12 +174,20 @@ function graph_data(average_heat_index_by_month: any)
   heat_measure_written=heat_measure;
   heat_measure_written=heat_measure_written.replaceAll("_"," ");
   heat_measure_written=to_title_case(heat_measure_written);
+  heat_measure_written=heat_measure_written.replace(" 2m "," ");
   console.log(heat_measure_written);
 
   humidity_measure_written=humidity_measure;
   humidity_measure_written=humidity_measure_written.replaceAll("_"," ");
   humidity_measure_written=to_title_case(humidity_measure_written);
+  humidity_measure_written=humidity_measure_written.replace(" 2m "," ");
   console.log(humidity_measure_written);
+
+  let target_park_written=target_park;
+  if(target_park_written.length<3)
+  {
+    target_park_written="All Parks";
+  }
 
   chart=new Chart(
     results_canvas,
@@ -206,14 +207,14 @@ function graph_data(average_heat_index_by_month: any)
         {
           y: {
             min: 0,
-            max: 140
+            max: 150
           }
         },
         plugins:
         {
           title:{
             display: true,
-            text: `Heat Index by ${heat_measure_written} and ${humidity_measure_written}`
+            text: [`${target_park_written} Heat Index by`,`${heat_measure_written} and ${humidity_measure_written}`]
           }
         }
       },
@@ -292,6 +293,3 @@ let humidity_measure_written="";
 
 let chart_created=false;
 let chart:Chart;
-
-let min_heat_index=1000;
-let max_heat_index=0;

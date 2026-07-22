@@ -45,7 +45,11 @@
   <canvas id="results_canvas"></canvas>
   </div>
   <h2>Methodology</h2>
-  <p>The heat is by day. The humidity is calculated by hour and converted into daily values. The daily minimum humidity is the minimum hourly humidity, the daily average humidity is the average of the 24 hourly humidity hours, and the maximum humidity is the maximum hourly humidity. The heat index is calculated based on each day's weather. You can select the daily minimum, average or maximum heat and the daily minimum, average or maximum humidity. The heat index is calculated based on your selected heat and humidity.</p>
+  <p>Daily heat and hourly humidity were gathered with OpenMeteo's Weather API in Python. Weather was found by using each park's longitutde and latitude and retrieving the past 10 years weather. The humidity is calculated by hour and converted into daily values. The daily minimum humidity is the minimum hourly humidity, the daily average humidity is the average of the 24 hourly humidity hours, and the maximum humidity is the maximum hourly humidity. The heat index is calculated based on each day's weather. You can select the daily minimum, average or maximum heat and the daily minimum, average or maximum humidity. The heat index is calculated based on your selected heat and humidity.</p>
+  <h2>Works Cited</h2>
+  <ul>
+  <li>Weather was gathered from <a href="https://open-meteo.com/">Open-Meteo</a></li>
+  </ul>
   </main>
   <script type="module">
 
