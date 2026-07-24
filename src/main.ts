@@ -49,6 +49,37 @@ export async function main(target_sheet:string)
   update_values();
 }
 
+//Get average values for a category column based on a value column.
+function get_average_values(data:any,category_column:string,value_column:string)
+{
+  let sorted_data=[...data];
+  sorted_data.sort((a:any,b:any) => a[category_column]-b[category_column]);
+  console.log(sorted_data);
+
+  let count=0;
+  let sum=0;
+  let target_value=sorted_data[0][category_column];
+  console.log(target_value);
+  let averages:number[]=[];
+
+  //Loop through filtered_weather_data to find the count and heat index sum for each month.
+  for(let i=0;i<sorted_data.length;i++)
+  {
+    //Once we are done with a month, calculate the average heat index for that month.
+    if(sorted_data[i][category_column]!=target_value)
+    {
+      target_value=sorted_data[i][category_column];
+      averages.push(round(sum/count,2));
+      sum=0;
+      count=0;
+    }
+    sum+=sorted_data[i][value_column];
+    count+=1;
+  }
+  averages.push(round(sum/count,2));
+  return averages;
+}
+
 //Convert heat index into 2d dictionary heat_index_dict[heat][humidity]
 function form_heat_index_dictionary(heat_index_raw:any)
 {
@@ -274,32 +305,9 @@ function calculate_results()
   }
 
   //Calculate the average heat index by month
-  let count=0;
-  let sum=0;
-  let target_month=1;
-  let average_heat_index_by_month:any[]=[];
+  let average_heat_index_by_month:number[]=get_average_values(filtered_weather_data,"Month","heat_index");
 
-  //Sort by month so that later months always occur after earlier months
-  filtered_weather_data.sort((a,b) => a["Month"]-b["Month"]);
-
-  //Loop through filtered_weather_data to find the count and heat index sum for each month.
-  for(let i=0;i<filtered_weather_data.length;i++)
-  {
-    //Once we are done with a month, calculate the average heat index for that month.
-    if(filtered_weather_data[i]["Month"]!=target_month)
-    {
-      average_heat_index_by_month.push(round(sum/count,2));
-      sum=0;
-      count=0;
-      target_month+=1;
-    }
-    sum+=filtered_weather_data[i]["heat_index"];
-    count+=1;
-  }
-  //Add the average heat index for December.
-  average_heat_index_by_month.push(round(sum/count,2));
-
-  console.log(average_heat_index_by_month);
+  console.log(`Results: ${average_heat_index_by_month}`);
   graph_data(average_heat_index_by_month);
 }
 export function update_values()
