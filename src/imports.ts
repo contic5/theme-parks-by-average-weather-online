@@ -2,6 +2,12 @@ let load_data_promise: Promise<void> | null = null;
 import {get_data} from './read_excel.ts';
 export const ERROR_NUMBER=999999;
 
+export const heat_levels=[
+    {name:"caution",heat:80,color:"yellow"},
+    {name:"caution",heat:90,color:"orange"},
+    {name:"caution",heat:105,color:"red"},
+    {name:"caution",heat:130,color:"darkred"},
+]
 //Convert heat index into 2d dictionary heat_index_dict[heat][humidity]
 function form_heat_index_dictionary(heat_index_raw:any)
 {

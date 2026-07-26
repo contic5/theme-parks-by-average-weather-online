@@ -1,7 +1,7 @@
-import Chart from 'chart.js/auto'
+import Chart, { plugins } from 'chart.js/auto'
 const imported_module = await import('./imports.ts');
 await imported_module.data_loaded;
-const { calculate_heat_index  } = imported_module;
+const { calculate_heat_index,heat_levels  } = imported_module;
 
 import {get_average_values,to_title_case } from './shared';
 
@@ -61,73 +61,28 @@ function graph_data(average_heat_index_by_month: any,target_park:string,heat_mea
   Danger: 105-129
   Extreme Danger: 130+
   */
-  const caution_line_plugin = 
-  {
-      id: 'horizontalLine',
-      afterDraw: (chart:any) => {
-          const yValue = chart.scales.y.getPixelForValue(80);
-          const ctx = chart.ctx;
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(chart.chartArea.left, yValue);
-          ctx.lineTo(chart.chartArea.right, yValue);
-          ctx.strokeStyle = 'yellow';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.restore();
-      }
-  };
 
-  const extreme_caution_line_plugin = 
+  let line_plugins=[]
+  for(let heat_level of heat_levels)
   {
-      id: 'horizontalLine',
-      afterDraw: (chart:any) => {
-          const yValue = chart.scales.y.getPixelForValue(90);
-          const ctx = chart.ctx;
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(chart.chartArea.left, yValue);
-          ctx.lineTo(chart.chartArea.right, yValue);
-          ctx.strokeStyle = 'orange';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.restore();
-      }
-  };
-
-  const warning_line_plugin = 
-  {
-      id: 'horizontalLine',
-      afterDraw: (chart:any) => {
-          const yValue = chart.scales.y.getPixelForValue(105);
-          const ctx = chart.ctx;
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(chart.chartArea.left, yValue);
-          ctx.lineTo(chart.chartArea.right, yValue);
-          ctx.strokeStyle = 'red';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.restore();
-      }
-  };
-
-  const extreme_warning_line_plugin = 
-  {
-      id: 'horizontalLine',
-      afterDraw: (chart:any) => {
-          const yValue = chart.scales.y.getPixelForValue(130);
-          const ctx = chart.ctx;
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(chart.chartArea.left, yValue);
-          ctx.lineTo(chart.chartArea.right, yValue);
-          ctx.strokeStyle = 'darkred';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.restore();
-      }
-  };
+    const line_plugin = 
+    {
+        id: 'horizontalLine',
+        afterDraw: (chart:any) => {
+            const yValue = chart.scales.y.getPixelForValue(heat_level['heat']);
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(chart.chartArea.left, yValue);
+            ctx.lineTo(chart.chartArea.right, yValue);
+            ctx.strokeStyle = heat_level['color'];
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+    line_plugins.push(line_plugin);
+  }
 
   //Convert heat measure into a more displayable form
   heat_measure_written=heat_measure;
@@ -177,7 +132,7 @@ function graph_data(average_heat_index_by_month: any,target_park:string,heat_mea
           }
         }
       },
-      plugins: [caution_line_plugin,extreme_caution_line_plugin,warning_line_plugin,extreme_warning_line_plugin]
+      plugins: line_plugins
     }
   );
 }
