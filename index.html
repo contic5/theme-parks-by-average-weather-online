@@ -56,14 +56,14 @@
   <script type="module">
 
   //This calls update values
-  import {update_values,main} from "/src/main.ts";
+  import {update_inputs,main} from "/src/main.ts";
   let heat_measure_element=document.getElementById("heat_measure");
   let humidity_measure_element=document.getElementById("humidity_measure");
   let target_park_element=document.getElementById("target_park");
 
-  heat_measure_element.onchange=update_values;
-  humidity_measure_element.onchange=update_values;
-  target_park_element.onchange=update_values;
+  heat_measure_element.onchange=update_inputs;
+  humidity_measure_element.onchange=update_inputs;
+  target_park_element.onchange=update_inputs;
 
   main("Data");
   </script>

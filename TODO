@@ -1,3 +1,5 @@
 Update description so that it uses average of all heat indexes rather than heat index of average temperature.
 
 NO PRE-AVERAGING. USE ALL OF THE ROWS. THIS MAKES IT EQUIVALENT TO THE PYTHON VERSION.
+
+ADD PERCENT OF DAYS ABOVE EACH HEAT INDEX LEVEL.
