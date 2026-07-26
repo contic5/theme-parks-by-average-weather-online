@@ -4,9 +4,9 @@ export const ERROR_NUMBER=999999;
 
 export const heat_levels=[
     {name:"caution",heat:80,color:"yellow"},
-    {name:"caution",heat:90,color:"orange"},
-    {name:"caution",heat:105,color:"red"},
-    {name:"caution",heat:130,color:"darkred"},
+    {name:"extreme_caution",heat:90,color:"orange"},
+    {name:"danger",heat:105,color:"red"},
+    {name:"extreme_danger",heat:130,color:"darkred"},
 ]
 //Convert heat index into 2d dictionary heat_index_dict[heat][humidity]
 function form_heat_index_dictionary(heat_index_raw:any)
@@ -85,11 +85,19 @@ export function calculate_heat_index(heat:number,humidity:number)
     return ERROR_NUMBER;
   }
 
-  const heat_index=heat_index_dict[heat_rounded][humidity_rounded];
+  let heat_index=heat_index_dict[heat_rounded][humidity_rounded];
+
+  //Keep subtracting from the humidity to try to get to an existing heat and humidity index
+  while(!heat_index&&humidity_rounded>=0)
+  {
+    heat_index=heat_index_dict[heat_rounded][humidity_rounded];
+    humidity_rounded-=4;
+  }
+
   if(!heat_index)
   {
     console.error(heat_index+" has an error. Returning ERROR_NUMBER "+ERROR_NUMBER);
-    return ERROR_NUMBER;
+    return heat;
   }
   return heat_index;
 }

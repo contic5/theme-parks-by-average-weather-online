@@ -1,5 +1,6 @@
 import './style.css'
 import { calculate_average_results } from './calculate_average_results.ts';
+import { calculate_above_levels } from './calculate_above_heat_levels.ts';
 import Chart from 'chart.js/auto'
 
 const imported_module = await import('./imports.ts');
@@ -20,6 +21,7 @@ export function update_inputs()
   const target_park_element=document.getElementById("target_park") as HTMLSelectElement;
   target_park=target_park_element.value;
   calculate_average_results(weather_data,target_park,heat_measure,humidity_measure);
+  calculate_above_levels(weather_data,target_park,heat_measure,humidity_measure);
 }
 export function main()
 {
