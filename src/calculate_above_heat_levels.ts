@@ -26,7 +26,6 @@ function create_bar_charts(monthly_heat_above_percents:any,target_park:string,he
     target_park_written="All Parks";
     }
 
-    console.log(monthly_heat_above_percents);
     for(let category in monthly_heat_above_percents)
     {
         const data=monthly_heat_above_percents[category]; 
@@ -37,7 +36,6 @@ function create_bar_charts(monthly_heat_above_percents:any,target_park:string,he
         let results_canvas=document.getElementById(`bar_${index}_canvas`) as HTMLCanvasElement;
         if(chart_created)
         {
-            console.log("Destroying chart");
             charts[index].destroy();
         }
 
@@ -104,7 +102,6 @@ export function calculate_above_levels(weather_data:any,target_park:string,heat_
 
     for(let heat_level of heat_levels)
     {
-        console.log(heat_level.name);
         monthly_heat_above_percents[heat_level.name]=get_average_values(filtered_weather_data,"Month",heat_level.name);
         for(let i=0;i<12;i++)
         {

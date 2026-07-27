@@ -8,7 +8,6 @@ import {get_average_values,to_title_case } from './shared';
 //Calculate the heat index for the selected heat measure and humidity measure.
 export function calculate_average_results(weather_data:any,target_park:string,heat_measure:string,humidity_measure:string)
 {
-  console.log(`Calculating heat index for ${heat_measure} and ${humidity_measure}`);
 
   let filtered_weather_data:any[]=[...weather_data];
   if(target_park.length>=3)
@@ -30,21 +29,17 @@ export function calculate_average_results(weather_data:any,target_park:string,he
   //Calculate the average heat index by month
   let average_heat_index_by_month:number[]=get_average_values(filtered_weather_data,"Month","heat_index");
 
-  console.log(`Results: ${average_heat_index_by_month}`);
   graph_data(average_heat_index_by_month,target_park,heat_measure,humidity_measure);
 }
 
 function graph_data(average_heat_index_by_month: any,target_park:string,heat_measure:string,humidity_measure:string)
 {
   let results_canvas=document.getElementById("results_canvas") as HTMLCanvasElement;
-  console.log(`Chart Created ${chart_created}`);
   if(chart_created)
   {
-    console.log("Destroying chart");
     chart.destroy();
   }
   chart_created=true;
-  console.log(`Updated Chart Created to equal ${chart_created}`);
 
   /*
   heat_index_category_dict={

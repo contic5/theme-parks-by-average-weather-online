@@ -16,12 +16,10 @@ export function get_average_values(data:any,category_column:string,value_column:
 {
   let sorted_data=[...data];
   sorted_data.sort((a:any,b:any) => a[category_column]-b[category_column]);
-  console.log(sorted_data);
 
   let count=0;
   let sum=0;
   let target_value=sorted_data[0][category_column];
-  console.log(target_value);
   let averages:number[]=[];
 
   //Loop through filtered_weather_data to find the count and heat index sum for each month.

@@ -34,6 +34,7 @@ async function load_data(target_sheet:string): Promise<void>
     {
         //Get weather data from Excel File
         weather_data=await get_data("Theme_Park_Weather_Data.xlsx",target_sheet);
+        console.log(weather_data);
 
         //Get heat index data from Excel File
         let heat_index_raw:any=await get_data("test-heat-index.xlsx");
@@ -106,4 +107,6 @@ export let park_names:any[]=[];
 export let weather_data:any[]=[];
 export let heat_index_dict:any={};
 
-export const data_loaded = load_data("Data");
+const target_sheet_element=document.getElementById("target_sheet") as HTMLInputElement;
+const target_sheet=target_sheet_element.value;
+export let data_loaded = load_data(target_sheet);
