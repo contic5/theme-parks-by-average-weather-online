@@ -57,7 +57,15 @@ function create_bar_charts(monthly_heat_above_percents:any,target_park:string,he
                 {
                   y: {
                     min: 0,
-                    max: 100
+                    max: 100,
+                    ticks: 
+                    {
+                      // Appends % symbol to the y-axis grid text
+                      callback: function(value) 
+                      {
+                        return value + '%';
+                      }
+                    }
                   }
                 },
                 plugins:

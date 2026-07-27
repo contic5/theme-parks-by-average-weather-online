@@ -19,9 +19,11 @@ export function update_inputs()
   //Get selected park
   const target_park_element=document.getElementById("target_park") as HTMLSelectElement;
   target_park=target_park_element.value;
-  
+
   calculate_average_results(weather_data,target_park,heat_measure,humidity_measure);
   calculate_above_levels(weather_data,target_park,heat_measure,humidity_measure);
+  let progress_h2=document.getElementById("progress") as HTMLElement;
+  progress_h2.innerHTML="Results";
 }
 export function main()
 {
