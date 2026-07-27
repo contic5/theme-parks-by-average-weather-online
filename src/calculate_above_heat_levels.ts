@@ -39,6 +39,8 @@ function create_bar_charts(monthly_heat_above_percents:any,target_park:string,he
             charts[index].destroy();
         }
 
+        const heat_number=heat_levels[index].heat;
+
         charts[index]=new Chart(
             results_canvas,
             {
@@ -72,7 +74,7 @@ function create_bar_charts(monthly_heat_above_percents:any,target_park:string,he
                 {
                   title:{
                     display: true,
-                    text: [`${target_park_written} Percent of Days with`,`Heat Index above ${category_written}`,`by ${heat_measure_written} and ${humidity_measure_written}`]
+                    text: [`${target_park_written} Percent of Days with`,`Heat Index above ${category_written} (${heat_number}° F)`,`by ${heat_measure_written} and ${humidity_measure_written}`]
                   }
                 }
               },

@@ -116,7 +116,15 @@ function graph_data(average_heat_index_by_month: any,target_park:string,heat_mea
         {
           y: {
             min: 0,
-            max: 160
+            max: 160,
+            ticks: 
+            {
+              // Appends % symbol to the y-axis grid text
+              callback: function(value) 
+              {
+                return value + '° F';
+              }
+            }
           }
         },
         plugins:
