@@ -21,7 +21,12 @@ export function update_inputs()
   target_park=target_park_element.value;
 
   calculate_average_results(weather_data,target_park,heat_measure,humidity_measure);
-  calculate_above_levels(weather_data,target_park,heat_measure,humidity_measure);
+
+  //Only calculate percent of days above heat levels if we are not including averages.
+  if(!target_sheet.includes("Average"))
+  {
+    calculate_above_levels(weather_data,target_park,heat_measure,humidity_measure);
+  }
   let progress_h2=document.getElementById("progress") as HTMLElement;
   progress_h2.innerHTML="Results";
 }
@@ -41,6 +46,9 @@ export function main()
 
 let park_names:any[]=get_park_names();
 let heat_index_dict:any={};
+
+const target_sheet_element=document.getElementById("target_sheet") as HTMLInputElement;
+const target_sheet:string=target_sheet_element.value;
 
 let target_park="";
 let heat_measure="";
