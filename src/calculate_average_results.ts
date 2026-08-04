@@ -60,6 +60,8 @@ function graph_data(average_heat_index_by_month: any,target_park:string,heat_mea
   let line_plugins=[]
   for(let heat_level of heat_levels)
   {
+    let heat_level_name_written=heat_level['name'].replace("_"," ");
+    heat_level_name_written=to_title_case(heat_level_name_written);
     const line_plugin = 
     {
         id: 'horizontalLine',
@@ -67,12 +69,18 @@ function graph_data(average_heat_index_by_month: any,target_park:string,heat_mea
             const yValue = chart.scales.y.getPixelForValue(heat_level['heat']);
             const ctx = chart.ctx;
             ctx.save();
+
             ctx.beginPath();
             ctx.moveTo(chart.chartArea.left, yValue);
             ctx.lineTo(chart.chartArea.right, yValue);
             ctx.strokeStyle = heat_level['color'];
             ctx.lineWidth = 2;
             ctx.stroke();
+
+            ctx.fillStyle = heat_level['color'];
+            ctx.textAlign='center';
+            ctx.fillText(heat_level_name_written,chart.width/2,yValue-4);
+            
             ctx.restore();
         }
     };
